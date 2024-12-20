@@ -48,11 +48,14 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\\\"
 
+require("config.options")
+require("config.keymaps")
+
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = {
     -- import your plugins
-    -- { import = "plugins" },
+    { import = "plugins" },
   },
   -- Configure any other settings here. See the documentation for more details.
   -- colorscheme that will be used when installing plugins.
@@ -63,6 +66,22 @@ require("lazy").setup({
 })
 EOF
 
+}
+
+make_tokyonight_plugin() {
+  touch $env_name/.config/$env_name/lua/plugins/tokyonight.lua
+  cat <<EOF >>$env_name/.config/$env_name/lua/plugins/tokyonight.lua
+return {
+	{
+		"folke/tokyonight.nvim",
+		lazy = false,
+		priority = 1000,
+		init = function()
+			vim.cmd.colorscheme("tokyonight")
+		end,
+	},
+}
+EOF
 }
 
 read -p "Do you want to init a vim environment? (Y/n) " answer
@@ -84,6 +103,7 @@ if [[ "$answer" == "Y" ]] || [[ "$answer" == "y" ]]; then
     make_runfile
     make_init_lua
     make_lazy_lua
+    make_tokyonight_plugin
   else
     exit 0
   fi
