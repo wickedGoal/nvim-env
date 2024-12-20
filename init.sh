@@ -71,8 +71,9 @@ if [[ -z $answer ]]; then
   answer="Y"
 fi
 
-if [[ ${answer,,} = "y" ]]; then
-  # if [[ answer = "Y" ]] || [[ answer = "y" ]]; then
+# Doesn't work on zsh
+# if [[ ${answer,,} = "y" ]]; then
+if [[ answer = "Y" ]] || [[ answer = "y" ]]; then
   read -p "What is the name of your vim environment? " env_name
 
   if [ $env_name ]; then
