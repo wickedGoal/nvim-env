@@ -5,7 +5,7 @@ make_runfile() {
   chmod +x $env_name/v.sh
   echo "#!/bin/bash" >>$env_name/v.sh
   echo "" >>$env_name/v.sh
-  echo "export BASE_DIR=\$(pwd)" >>$env_name/v.sh
+  echo "export BASE_DIR=\$(dirname \$(readlink -f \"\$0\"))" >>$env_name/v.sh
   echo "" >>$env_name/v.sh
   echo "export NVIM_APPNAME=$env_name" >>$env_name/v.sh
   echo "" >>$env_name/v.sh
@@ -22,7 +22,7 @@ make_init_lua() {
   echo "require('config.lazy')" >>$env_name/.config/$env_name/init.lua
 }
 
-make_lazy_lua() {
+make_lazy_lua_install_part() {
   touch $env_name/.config/$env_name/lua/config/lazy.lua
   cat <<EOF >>$env_name/.config/$env_name/lua/config/lazy.lua
 -- Bootstrap lazy.nvim
@@ -46,10 +46,13 @@ vim.opt.rtp:prepend(lazypath)
 -- loading lazy.nvim so that mappings are correct.
 -- This is also a good place to setup other settings (vim.opt)
 vim.g.mapleader = " "
-vim.g.maplocalleader = "\\\\"
+vim.g.maplocalleader = " "
+EOF
 
-require("config.options")
-require("config.keymaps")
+}
+
+make_lazy_lua_setup_part() {
+  cat <<EOF >>$env_name/.config/$env_name/lua/config/lazy.lua
 
 -- Setup lazy.nvim
 require("lazy").setup({
@@ -62,10 +65,9 @@ require("lazy").setup({
   install = { colorscheme = { "habamax" } },
 
   -- automatically check for plugin updates
-  checker = { enabled = true },
+  -- checker = { enabled = true },
 })
 EOF
-
 }
 
 make_tokyonight_plugin() {
@@ -102,8 +104,30 @@ if [[ "$answer" == "Y" ]] || [[ "$answer" == "y" ]]; then
     mkdir -p $env_name/.config/$env_name/lua/plugins
     make_runfile
     make_init_lua
-    make_lazy_lua
+    make_lazy_lua_install_part
     make_tokyonight_plugin
+
+    read -p "Do you want to install minimal options/keymaps? (Y/n) " core_answer
+
+    if [[ -z $core_answer ]]; then
+      core_answer="Y"
+    fi
+
+    if [[ "$core_answer" == "Y" ]] || [[ "$core_answer" == "y" ]]; then
+      echo "Installing minimal options/keymaps..."
+      cp -r envs/core/* $env_name/.config/$env_name/lua
+      cat <<EOF >>$env_name/.config/$env_name/lua/config/lazy.lua
+
+require("config.options")
+require("config.keymaps")
+EOF
+    else
+      echo "Skipping core packages..."
+    fi
+
+    make_lazy_lua_setup_part
+
+    echo "Done! Run $env_name/v.sh"
   else
     exit 0
   fi
