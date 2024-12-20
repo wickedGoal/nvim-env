@@ -100,6 +100,7 @@ if [[ "$answer" == "Y" ]] || [[ "$answer" == "y" ]]; then
   if [ $env_name ]; then
     echo "Creating environment $env_name"
     mkdir $env_name
+    INIT_BASE_DIR=$(dirname $(readlink -f "$0"))
     mkdir -p $env_name/.config/$env_name/lua/config
     mkdir -p $env_name/.config/$env_name/lua/plugins
     make_runfile
@@ -115,7 +116,7 @@ if [[ "$answer" == "Y" ]] || [[ "$answer" == "y" ]]; then
 
     if [[ "$core_answer" == "Y" ]] || [[ "$core_answer" == "y" ]]; then
       echo "Installing minimal options/keymaps..."
-      cp -r envs/core/* $env_name/.config/$env_name/lua
+      cp -r $INIT_BASE_DIR/envs/core/* $env_name/.config/$env_name/lua
       cat <<EOF >>$env_name/.config/$env_name/lua/config/lazy.lua
 
 require("config.options")
