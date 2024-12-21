@@ -1,6 +1,6 @@
 #!/bin/bash
 
-make_runfile() {
+make_runfile_linux() {
   touch $env_name/v.sh
   chmod +x $env_name/v.sh
   echo "#!/bin/bash" >>$env_name/v.sh
@@ -15,6 +15,25 @@ make_runfile() {
   echo "export NVIM_LOG_FILE=\$BASE_DIR/.local/state/\$NVIM_APPNAME/log" >>$env_name/v.sh
   echo "" >>$env_name/v.sh
   echo "nvim \"\$@\"" >>$env_name/v.sh
+}
+
+make_runfile_windows() {
+  touch $env_name/v.ps1
+  cat <<EOF >>$env_name/v.ps1
+& {
+\$BASE_DIR = \$PSScriptRoot
+
+\$env:NVIM_APPNAME="flutter-nvenv"
+
+\$env:XDG_CONFIG_HOME= Join-Path \$BASE_DIR ".config"
+\$env:XDG_DATA_HOME= Join-Path \$BASE_DIR ".local\\share"
+\$env:XDG_STATE_HOME= Join-Path \$BASE_DIR ".local\\state"
+\$env:NVIM_LOG_FILE= Join-Path \$BASE_DIR ".local\\state\\\$NVIM_APPNAME\\log"
+}
+
+& nvim.exe \$args
+
+EOF
 }
 
 make_init_lua() {
@@ -103,7 +122,8 @@ if [[ "$answer" == "Y" ]] || [[ "$answer" == "y" ]]; then
     INIT_BASE_DIR=$(dirname $(readlink -f "$0"))
     mkdir -p $env_name/.config/$env_name/lua/config
     mkdir -p $env_name/.config/$env_name/lua/plugins
-    make_runfile
+    make_runfile_linux
+    make_runfile_windows
     make_init_lua
     make_lazy_lua_install_part
     make_tokyonight_plugin
