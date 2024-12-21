@@ -32,8 +32,8 @@ make_runfile_windows() {
 }
 
 & nvim.exe \$args
-
 EOF
+
 }
 
 make_init_lua() {
