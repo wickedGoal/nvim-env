@@ -1,5 +1,3 @@
-print("loading flutter-tools")
-
 return {
 	{
 		"nvim-flutter/flutter-tools.nvim",
