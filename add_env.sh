@@ -50,7 +50,8 @@ envs=($(find $ENVS_DIR -maxdepth 1 -mindepth 1 -type d -printf "%f\n"))
 # echo "${envs[0]}"
 
 # remove element named core from envs
-envs=("${envs[@]/core/}")
+# commented out for now, other envs get to start with no 2
+# envs=("${envs[@]/core/}")
 
 # echo "${envs[@]}"
 
