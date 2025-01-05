@@ -44,7 +44,9 @@ NVIM_ENV_NAME=${NVIM_ENV_DIR##*/}
 # echo $NVIM_ENV_NAME
 
 # get one-depth subdirectories' name in ENVS_DIR
-envs=($(find $ENVS_DIR -maxdepth 1 -mindepth 1 -type d -printf "%f\n"))
+envs=($(find $ENVS_DIR -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | sort))
+# Does not work in mac OS find. (No -printf because mac is BSD)
+# envs=($(find $ENVS_DIR -maxdepth 1 -mindepth 1 -type d -printf "%f\n"))
 # envs=$(find $ENVS_DIR -maxdepth 1 -type d -printf "%f\n")
 
 # echo "${envs[0]}"
