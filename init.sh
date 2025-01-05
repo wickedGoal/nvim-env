@@ -148,6 +148,17 @@ EOF
 
     make_lazy_lua_setup_part
 
+    read -p "Do you want to install additional plugins? (Y/n) " plugins_answer
+
+    if [[ -z $plugins_answer ]]; then
+      plugins_answer="Y"
+    fi
+
+    if [[ "$plugins_answer" == "Y" ]] || [[ "$plugins_answer" == "y" ]]; then
+      RUNNING_DIR=$env_name . $INIT_BASE_DIR/add_env.sh
+      echo -e '\n'
+    fi
+
     echo "Done! Run $env_name/v.sh"
   else
     exit 0
